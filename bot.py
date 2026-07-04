@@ -96,9 +96,8 @@ async def on_startup(app: web.Application):
     await bot.set_webhook(WEBHOOK_URL)
     logging.info(f"Webhook o'rnatildi: {WEBHOOK_URL}")
  
- 
-async def on_shutdown(app: web.Application):
-    await bot.delete_webhook()
+ async def on_shutdown(app: web.Application):
+    logging.info("Xizmat to'xtayapti (webhook saqlanib qoladi)")
  
  
 def main():
