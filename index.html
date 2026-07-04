@@ -1,31 +1,34 @@
+
 <!DOCTYPE html>
 <html lang="uz">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Buyurtma berish</title>
+<title>OKEY PLUS — Buyurtma</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <style>
   :root {
-    --forest: #1F3A2E;
-    --forest-light: #2E5140;
-    --sand: #F6F0E4;
-    --sage: #E1E8DB;
-    --gold: #C99A2E;
-    --gold-dark: #A87D1E;
-    --ink: #22241F;
-    --ink-soft: #5C6157;
-    --line: #D8D2C2;
+    --deep: #12507A;
+    --blue: #1E7FB8;
+    --blue-light: #EAF4FB;
+    --sky: #D7ECF8;
     --white: #FFFFFF;
+    --ink: #16283A;
+    --ink-soft: #5E7A8C;
+    --line: #CFE3F0;
+    --amber: #C97A1E;
+    --amber-light: #FBEEDE;
   }
 
   * { box-sizing: border-box; }
 
   body {
     margin: 0;
-    background: var(--sand);
+    background: var(--blue-light);
     color: var(--ink);
     font-family: 'Manrope', sans-serif;
     -webkit-font-smoothing: antialiased;
@@ -34,99 +37,208 @@
   .wrap {
     max-width: 480px;
     margin: 0 auto;
-    padding: 20px 20px 140px;
+    padding: 20px 18px 150px;
   }
 
-  /* Product hero */
+  /* ===== Product hero ===== */
   .product-card {
-    background: var(--forest);
+    background: linear-gradient(155deg, var(--deep), var(--blue));
     border-radius: 20px;
     padding: 22px;
-    color: var(--sand);
+    color: var(--white);
     position: relative;
     overflow: hidden;
-    margin-bottom: 22px;
+    margin-bottom: 18px;
   }
 
   .product-card::after {
     content: "";
     position: absolute;
-    top: -40px; right: -40px;
-    width: 140px; height: 140px;
-    background: var(--forest-light);
+    top: -50px; right: -50px;
+    width: 160px; height: 160px;
+    background: rgba(255,255,255,0.08);
     border-radius: 50%;
-    opacity: 0.5;
+  }
+
+  .roll-icon {
+    width: 40px; height: 40px;
+    margin-bottom: 10px;
+    position: relative;
   }
 
   .eyebrow {
-    font-size: 12px;
+    font-size: 11px;
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: var(--gold);
+    color: var(--sky);
     font-weight: 700;
     position: relative;
   }
 
   .product-name {
     font-family: 'Fraunces', serif;
-    font-size: 26px;
+    font-size: 23px;
     font-weight: 600;
-    margin: 8px 0 4px;
+    margin: 6px 0 10px;
     position: relative;
-    line-height: 1.15;
+    line-height: 1.2;
   }
 
-  .product-desc {
-    font-size: 14px;
-    color: #C9D4C4;
-    margin: 0 0 18px;
-    position: relative;
-    max-width: 320px;
-  }
-
-  .price-row {
+  .spec-tags {
     display: flex;
-    align-items: baseline;
+    flex-wrap: wrap;
     gap: 6px;
     position: relative;
   }
 
-  .price {
-    font-family: 'Fraunces', serif;
-    font-size: 30px;
+  .spec-tag {
+    background: rgba(255,255,255,0.14);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 20px;
+    padding: 5px 11px;
+    font-size: 11.5px;
+    color: var(--sky);
+    font-weight: 600;
+  }
+
+  /* perforation divider — nazoratdagi mahsulotga ishora */
+  .perforation {
+    display: flex;
+    gap: 6px;
+    margin: 16px -22px -22px;
+    padding: 0 22px 14px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .perforation span {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.35);
+    flex-shrink: 0;
+  }
+
+  /* ===== Payment toggle ===== */
+  .section-label {
+    font-size: 12px;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
     font-weight: 700;
+    margin: 22px 2px 10px;
+  }
+
+  .pay-toggle {
+    display: flex;
+    background: var(--white);
+    border: 1.5px solid var(--line);
+    border-radius: 14px;
+    padding: 5px;
+    gap: 5px;
+  }
+
+  .pay-btn {
+    flex: 1;
+    border: none;
+    background: transparent;
+    padding: 12px 10px;
+    border-radius: 10px;
+    font-family: 'Manrope', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--ink-soft);
+    cursor: pointer;
+  }
+
+  .pay-btn.active {
+    background: var(--blue);
     color: var(--white);
   }
 
-  .price-unit {
-    font-size: 13px;
-    color: #A9B8A2;
+  .pay-btn.active.qarz-active {
+    background: var(--amber);
   }
 
-  /* Quantity stepper */
-  .stepper-section {
+  .pay-hint {
+    font-size: 12px;
+    color: var(--ink-soft);
+    margin: 8px 2px 0;
+  }
+
+  /* ===== Variant cards ===== */
+  .variant-card {
+    background: var(--white);
+    border: 1.5px solid var(--line);
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 12px;
+  }
+
+  .variant-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+  }
+
+  .variant-title {
+    font-family: 'Fraunces', serif;
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  .variant-sub {
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    margin-top: 2px;
+  }
+
+  .variant-unit-price {
+    font-family: 'Fraunces', serif;
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--deep);
+    text-align: right;
+    white-space: nowrap;
+  }
+
+  .variant-unit-price small {
+    display: block;
+    font-family: 'Manrope', sans-serif;
+    font-size: 10.5px;
+    font-weight: 600;
+    color: var(--ink-soft);
+  }
+
+  .discount-hint {
+    font-size: 11.5px;
+    color: var(--amber);
+    font-weight: 700;
+    margin-top: 4px;
+  }
+
+  .stepper-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-top: 20px;
-    position: relative;
   }
 
   .stepper {
     display: flex;
     align-items: center;
-    background: rgba(255,255,255,0.08);
+    background: var(--blue-light);
     border-radius: 14px;
     padding: 6px;
   }
 
   .stepper button {
-    width: 34px; height: 34px;
-    border-radius: 10px;
+    width: 32px; height: 32px;
+    border-radius: 9px;
     border: none;
-    background: var(--gold);
-    color: var(--forest);
-    font-size: 18px;
+    background: var(--blue);
+    color: var(--white);
+    font-size: 17px;
     font-weight: 700;
     cursor: pointer;
   }
@@ -134,27 +246,39 @@
   .stepper button:active { transform: scale(0.94); }
 
   .qty-value {
-    width: 46px;
+    width: 54px;
     text-align: center;
     font-family: 'Fraunces', serif;
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 600;
-    color: var(--white);
+    color: var(--ink);
+    border: none;
+    background: transparent;
+    -moz-appearance: textfield;
   }
 
-  /* Form */
-  .section-label {
-    font-size: 12px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
+  .qty-value::-webkit-outer-spin-button,
+  .qty-value::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  .qty-value:focus {
+    outline: none;
+    background: var(--white);
+    border-radius: 6px;
+  }
+
+  .variant-subtotal {
+    font-size: 13px;
     color: var(--ink-soft);
-    font-weight: 700;
-    margin: 26px 0 10px 2px;
+    font-weight: 600;
   }
 
-  .field {
-    margin-bottom: 14px;
-  }
+  .variant-subtotal b { color: var(--ink); }
+
+  /* ===== Form fields ===== */
+  .field { margin-bottom: 14px; }
 
   .field label {
     display: block;
@@ -164,8 +288,7 @@
     font-weight: 600;
   }
 
-  .field input,
-  .field textarea {
+  .field input, .field textarea {
     width: 100%;
     border: 1.5px solid var(--line);
     background: var(--white);
@@ -178,32 +301,37 @@
     transition: border-color 0.15s ease;
   }
 
-  .field input:focus,
-  .field textarea:focus {
-    border-color: var(--forest);
-  }
-
-  .field textarea {
-    resize: none;
-    min-height: 70px;
-  }
-
-  .field.error input {
-    border-color: #B5493A;
-  }
-
-  .error-msg {
-    color: #B5493A;
-    font-size: 12px;
-    margin-top: 4px;
-    display: none;
-  }
-
+  .field input:focus, .field textarea:focus { border-color: var(--blue); }
+  .field textarea { resize: none; min-height: 70px; }
+  .field.error input { border-color: #C0392B; }
+  .error-msg { color: #C0392B; font-size: 12px; margin-top: 4px; display: none; }
   .field.error .error-msg { display: block; }
+  .field.error .map-btn { border-color: #C0392B; }
 
-  /* Receipt summary */
+  .map-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border: 1.5px solid var(--line);
+    background: var(--white);
+    border-radius: 12px;
+    padding: 13px 14px;
+    font-size: 14px;
+    font-family: 'Manrope', sans-serif;
+    color: var(--ink-soft);
+    cursor: pointer;
+    text-align: left;
+  }
+
+  .map-btn.selected { color: var(--ink); border-color: var(--blue); }
+  .map-btn-icon { font-size: 16px; }
+  #addressPreview { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .map-btn-arrow { color: var(--line); font-size: 18px; }
+
+  /* ===== Receipt ===== */
   .receipt {
-    margin-top: 24px;
+    margin-top: 20px;
     background: var(--white);
     border: 1.5px dashed var(--line);
     border-radius: 14px;
@@ -213,7 +341,7 @@
   .receipt-row {
     display: flex;
     justify-content: space-between;
-    font-size: 14px;
+    font-size: 13.5px;
     color: var(--ink-soft);
     padding: 5px 0;
   }
@@ -229,26 +357,25 @@
 
   .receipt-row.total span:last-child {
     font-family: 'Fraunces', serif;
-    color: var(--forest);
+    color: var(--deep);
   }
 
-  /* Sticky CTA */
+  .receipt-row.pay-mode span:last-child { font-weight: 700; color: var(--deep); }
+
+  /* ===== Sticky CTA ===== */
   .cta-bar {
     position: fixed;
     bottom: 0; left: 0; right: 0;
-    background: linear-gradient(to top, var(--sand) 60%, transparent);
-    padding: 18px 20px 22px;
+    background: linear-gradient(to top, var(--blue-light) 60%, transparent);
+    padding: 18px 18px 22px;
   }
 
-  .cta-bar-inner {
-    max-width: 480px;
-    margin: 0 auto;
-  }
+  .cta-bar-inner { max-width: 480px; margin: 0 auto; }
 
   .cta-btn {
     width: 100%;
-    background: var(--forest);
-    color: var(--sand);
+    background: var(--deep);
+    color: var(--white);
     border: none;
     border-radius: 14px;
     padding: 16px;
@@ -256,36 +383,156 @@
     font-weight: 700;
     font-family: 'Manrope', sans-serif;
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
   }
 
   .cta-btn:active { transform: scale(0.98); }
-  .cta-btn:disabled { opacity: 0.5; }
+
+  /* ===== Map modal ===== */
+  .map-modal {
+    position: fixed; inset: 0;
+    background: var(--blue-light);
+    z-index: 999;
+    display: none;
+    flex-direction: column;
+  }
+
+  .map-modal.open { display: flex; }
+
+  .map-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 18px;
+    background: var(--deep);
+    color: var(--white);
+    font-family: 'Fraunces', serif;
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  .map-header button {
+    background: rgba(255,255,255,0.14);
+    border: none;
+    color: var(--white);
+    width: 30px; height: 30px;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+
+  #mapView { flex: 1; position: relative; }
+
+  .center-pin {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -100%);
+    font-size: 34px;
+    z-index: 500;
+    pointer-events: none;
+    filter: drop-shadow(0 3px 3px rgba(0,0,0,0.3));
+  }
+
+  .map-footer {
+    background: var(--white);
+    padding: 14px 18px 18px;
+    box-shadow: 0 -4px 14px rgba(0,0,0,0.06);
+  }
+
+  .locate-btn {
+    display: flex; align-items: center; gap: 6px;
+    background: none; border: none;
+    color: var(--deep);
+    font-weight: 700; font-size: 13px;
+    padding: 4px 0 10px;
+    cursor: pointer;
+    font-family: 'Manrope', sans-serif;
+  }
+
+  .address-preview {
+    font-size: 13px;
+    color: var(--ink-soft);
+    margin-bottom: 12px;
+    min-height: 18px;
+    line-height: 1.4;
+  }
 </style>
 </head>
 <body>
 <div class="wrap">
 
   <div class="product-card">
-    <div class="eyebrow">Mahsulot</div>
-    <div class="product-name" id="productName">Mahsulot nomi</div>
-    <p class="product-desc" id="productDesc">Qisqacha tavsif shu yerga yoziladi — sifat, hajm yoki qadoqlash haqida.</p>
-    <div class="price-row">
-      <span class="price" id="unitPrice">50 000</span>
-      <span class="price-unit">so'm / dona</span>
+    <svg class="roll-icon" viewBox="0 0 40 40" fill="none">
+      <ellipse cx="20" cy="10" rx="13" ry="6" fill="#ffffff" opacity="0.9"/>
+      <ellipse cx="20" cy="10" rx="6" ry="3" fill="#12507A"/>
+      <path d="M7 10 V26 C7 29.3 12.8 32 20 32 C27.2 32 33 29.3 33 26 V10" stroke="#ffffff" stroke-width="1.6" fill="none" opacity="0.85"/>
+    </svg>
+    <div class="eyebrow">OKEY PLUS</div>
+    <div class="product-name">Hojatxona qog'ozi<br>2 qavatli</div>
+    <div class="spec-tags">
+      <span class="spec-tag">2 qavat</span>
+      <span class="spec-tag">800gr ±30gr</span>
+      <span class="spec-tag">8.5×12 sm</span>
     </div>
+    <div class="perforation">
+      <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+    </div>
+  </div>
 
-    <div class="stepper-section">
-      <span class="price-unit">Miqdor</span>
-      <div class="stepper">
-        <button type="button" id="minusBtn">−</button>
-        <span class="qty-value" id="qtyValue">5</span>
-        <button type="button" id="plusBtn">+</button>
+  <div class="section-label">To'lov turi</div>
+  <div class="pay-toggle">
+    <button type="button" class="pay-btn active" id="naqdBtn">💵 Naqd</button>
+    <button type="button" class="pay-btn" id="qarzBtn">📝 Qarzga</button>
+  </div>
+  <div class="pay-hint" id="payHint">100 pachkadan ko'p 6 talikni naqdga olsangiz — 1 pachka 10 000 so'm bo'ladi</div>
+
+  <div class="section-label">Pachka turini tanlang</div>
+
+  <div class="variant-card">
+    <div class="variant-top">
+      <div>
+        <div class="variant-title">6 talik pachka</div>
+        <div class="variant-sub">Har birida 6 dona</div>
+      </div>
+      <div class="variant-unit-price">
+        <span id="price6">10 200 so'm</span>
+        <small>1 pachka narxi</small>
       </div>
     </div>
+    <div class="discount-hint" id="discountHint6" style="display:none;">🎉 Chegirma qo'llandi — 100+ pachka naqd narxi</div>
+    <div class="stepper-row">
+      <div class="stepper">
+        <button type="button" id="minus6">−</button>
+        <input type="number" class="qty-value" id="qty6" value="0" min="0" inputmode="numeric">
+        <button type="button" id="plus6">+</button>
+      </div>
+      <div class="variant-subtotal">Jami: <b id="subtotal6">0 so'm</b></div>
+    </div>
+  </div>
+
+  <div class="variant-card">
+    <div class="variant-top">
+      <div>
+        <div class="variant-title">8 talik pachka</div>
+        <div class="variant-sub">Har birida 8 dona</div>
+      </div>
+      <div class="variant-unit-price">
+        <span id="price8">12 500 so'm</span>
+        <small>1 pachka narxi</small>
+      </div>
+    </div>
+    <div class="discount-hint" id="discountHint8" style="display:none;">🎉 Chegirma qo'llandi — 100+ pachka naqd narxi</div>
+    <div class="stepper-row">
+      <div class="stepper">
+        <button type="button" id="minus8">−</button>
+        <input type="number" class="qty-value" id="qty8" value="0" min="0" inputmode="numeric">
+        <button type="button" id="plus8">+</button>
+      </div>
+      <div class="variant-subtotal">Jami: <b id="subtotal8">0 so'm</b></div>
+    </div>
+  </div>
+
+  <div class="receipt">
+    <div class="receipt-row pay-mode"><span>To'lov turi</span><span id="rPayMode">Naqd</span></div>
+    <div class="receipt-row"><span>6 talik (<span id="rQty6">0</span> pachka)</span><span id="rSub6">0 so'm</span></div>
+    <div class="receipt-row"><span>8 talik (<span id="rQty8">0</span> pachka)</span><span id="rSub8">0 so'm</span></div>
+    <div class="receipt-row total"><span>Jami</span><span id="rTotal">0 so'm</span></div>
   </div>
 
   <div class="section-label">Haridor ma'lumotlari</div>
@@ -303,22 +550,19 @@
   </div>
 
   <div class="field" id="addressField">
-    <label for="address">Yetkazib berish manzili</label>
-    <input type="text" id="address" placeholder="Shahar, tuman, ko'cha, uy">
-    <div class="error-msg">Iltimos, manzilni kiriting</div>
+    <label>Yetkazib berish manzili</label>
+    <button type="button" class="map-btn" id="openMapBtn">
+      <span class="map-btn-icon">📍</span>
+      <span id="addressPreview">Xaritadan tanlash</span>
+      <span class="map-btn-arrow">›</span>
+    </button>
+    <div class="error-msg">Iltimos, manzilni xaritadan belgilang</div>
   </div>
 
   <div class="section-label">Qo'shimcha (ixtiyoriy)</div>
-
   <div class="field">
-    <label for="note">Izoh / ulgurchi savdo shartlari</label>
-    <textarea id="note" placeholder="Masalan: ulgurchi narx, yetkazib berish vaqti va h.k."></textarea>
-  </div>
-
-  <div class="receipt">
-    <div class="receipt-row"><span>Narxi (1 dona)</span><span id="rUnit">50 000 so'm</span></div>
-    <div class="receipt-row"><span>Miqdor</span><span id="rQty">1</span></div>
-    <div class="receipt-row total"><span>Jami</span><span id="rTotal">50 000 so'm</span></div>
+    <label for="note">Izoh</label>
+    <textarea id="note" placeholder="Masalan: yetkazib berish vaqti va h.k."></textarea>
   </div>
 
 </div>
@@ -329,46 +573,179 @@
   </div>
 </div>
 
+<div class="map-modal" id="mapModal">
+  <div class="map-header">
+    <span>Manzilni xaritadan belgilang</span>
+    <button id="closeMapBtn">✕</button>
+  </div>
+  <div id="mapView"></div>
+  <div class="center-pin">📍</div>
+  <div class="map-footer">
+    <button class="locate-btn" id="locateBtn">📡 Joriy joylashuvimni aniqlash</button>
+    <div class="address-preview" id="mapAddressPreview">Aniq manzil uchun xaritani suring</div>
+    <button class="cta-btn" id="confirmMapBtn">Ushbu manzilni tasdiqlash</button>
+  </div>
+</div>
+
 <script>
   const tg = window.Telegram ? window.Telegram.WebApp : null;
   if (tg) { tg.ready(); tg.expand(); }
 
-  const UNIT_PRICE = 9000; // shu yerni haqiqiy narx bilan almashtiring
-  let qty = 1;
+  // ==== Narxlar ====
+  const PRICES = {
+    6: { naqd: 10200, qarz: 10500, bulkNaqd: 10000, bulkThreshold: 100 },
+    8: { naqd: 12500, qarz: 13000, bulkNaqd: 12300, bulkThreshold: 100 }
+  };
 
-  const qtyValue = document.getElementById('qtyValue');
-  const rQty = document.getElementById('rQty');
-  const rUnit = document.getElementById('rUnit');
-  const rTotal = document.getElementById('rTotal');
+  let payMode = 'naqd'; // 'naqd' | 'qarz'
+  let qty6 = 0;
+  let qty8 = 0;
 
-  function formatSom(n) {
-    return n.toLocaleString('ru-RU') + ' so\'m';
+  function formatSom(n) { return n.toLocaleString('ru-RU') + " so'm"; }
+
+  function unitPrice6() {
+    if (payMode === 'qarz') return PRICES[6].qarz;
+    return qty6 > PRICES[6].bulkThreshold ? PRICES[6].bulkNaqd : PRICES[6].naqd;
   }
 
-  function updateReceipt() {
-    qtyValue.textContent = qty;
-    rQty.textContent = qty;
-    rUnit.textContent = formatSom(UNIT_PRICE);
-    rTotal.textContent = formatSom(UNIT_PRICE * qty);
+  function unitPrice8() {
+    if (payMode === 'qarz') return PRICES[8].qarz;
+    return qty8 >= PRICES[8].bulkThreshold ? PRICES[8].bulkNaqd : PRICES[8].naqd;
   }
 
-  document.getElementById('plusBtn').addEventListener('click', () => {
-    qty += 1;
-    updateReceipt();
+  function render() {
+    const p6 = unitPrice6();
+    const p8 = unitPrice8();
+    const sub6 = p6 * qty6;
+    const sub8 = p8 * qty8;
+
+    document.getElementById('price6').textContent = formatSom(p6);
+    document.getElementById('price8').textContent = formatSom(p8);
+    document.getElementById('qty6').value = qty6;
+    document.getElementById('qty8').value = qty8;
+    document.getElementById('subtotal6').textContent = formatSom(sub6);
+    document.getElementById('subtotal8').textContent = formatSom(sub8);
+
+    document.getElementById('rQty6').textContent = qty6;
+    document.getElementById('rQty8').textContent = qty8;
+    document.getElementById('rSub6').textContent = formatSom(sub6);
+    document.getElementById('rSub8').textContent = formatSom(sub8);
+    document.getElementById('rTotal').textContent = formatSom(sub6 + sub8);
+    document.getElementById('rPayMode').textContent = payMode === 'naqd' ? 'Naqd' : 'Qarzga';
+
+    const discountActive6 = payMode === 'naqd' && qty6 > PRICES[6].bulkThreshold;
+    document.getElementById('discountHint6').style.display = discountActive6 ? 'block' : 'none';
+
+    const discountActive8 = payMode === 'naqd' && qty8 >= PRICES[8].bulkThreshold;
+    document.getElementById('discountHint8').style.display = discountActive8 ? 'block' : 'none';
+  }
+
+  document.getElementById('naqdBtn').addEventListener('click', () => {
+    payMode = 'naqd';
+    document.getElementById('naqdBtn').classList.add('active');
+    document.getElementById('naqdBtn').classList.remove('qarz-active');
+    document.getElementById('qarzBtn').classList.remove('active', 'qarz-active');
+    render();
   });
 
-  document.getElementById('minusBtn').addEventListener('click', () => {
-    if (qty > 1) qty -= 1;
-    updateReceipt();
+  document.getElementById('qarzBtn').addEventListener('click', () => {
+    payMode = 'qarz';
+    document.getElementById('qarzBtn').classList.add('active', 'qarz-active');
+    document.getElementById('naqdBtn').classList.remove('active');
+    render();
   });
 
-  updateReceipt();
+  document.getElementById('plus6').addEventListener('click', () => { qty6++; render(); });
+  document.getElementById('minus6').addEventListener('click', () => { if (qty6 > 0) qty6--; render(); });
+  document.getElementById('plus8').addEventListener('click', () => { qty8++; render(); });
+  document.getElementById('minus8').addEventListener('click', () => { if (qty8 > 0) qty8--; render(); });
 
+  document.getElementById('qty6').addEventListener('input', (e) => {
+    qty6 = Math.max(0, parseInt(e.target.value) || 0);
+    render();
+  });
+  document.getElementById('qty8').addEventListener('input', (e) => {
+    qty8 = Math.max(0, parseInt(e.target.value) || 0);
+    render();
+  });
+
+  render();
+
+  // ==== Xarita orqali manzil tanlash ====
+  const DEFAULT_CENTER = [41.572069, 64.195321]; // Zarafshon shahri, Navoiy viloyati
+  let map = null;
+  let selectedAddress = { text: '', lat: null, lon: null };
+  let reverseGeocodeTimer = null;
+
+  const mapModal = document.getElementById('mapModal');
+  const mapAddressPreview = document.getElementById('mapAddressPreview');
+  const addressPreview = document.getElementById('addressPreview');
+  const openMapBtn = document.getElementById('openMapBtn');
+
+  function initMapIfNeeded() {
+    if (map) return;
+    map = L.map('mapView', { zoomControl: true, attributionControl: false }).setView(DEFAULT_CENTER, 14);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(map);
+    map.on('moveend', scheduleReverseGeocode);
+  }
+
+  function scheduleReverseGeocode() {
+    clearTimeout(reverseGeocodeTimer);
+    mapAddressPreview.textContent = 'Manzil aniqlanmoqda...';
+    reverseGeocodeTimer = setTimeout(reverseGeocode, 600);
+  }
+
+  async function reverseGeocode() {
+    const center = map.getCenter();
+    try {
+      const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${center.lat}&lon=${center.lng}&zoom=18`);
+      const data = await res.json();
+      const text = data.display_name || `${center.lat.toFixed(5)}, ${center.lng.toFixed(5)}`;
+      mapAddressPreview.textContent = text;
+      selectedAddress = { text, lat: center.lat, lon: center.lng };
+    } catch (e) {
+      const text = `${center.lat.toFixed(5)}, ${center.lng.toFixed(5)}`;
+      mapAddressPreview.textContent = text;
+      selectedAddress = { text, lat: center.lat, lon: center.lng };
+    }
+  }
+
+  openMapBtn.addEventListener('click', () => {
+    mapModal.classList.add('open');
+    initMapIfNeeded();
+    setTimeout(() => {
+      map.invalidateSize();
+      if (!selectedAddress.lat) scheduleReverseGeocode();
+    }, 100);
+  });
+
+  document.getElementById('closeMapBtn').addEventListener('click', () => {
+    mapModal.classList.remove('open');
+  });
+
+  document.getElementById('locateBtn').addEventListener('click', () => {
+    if (!navigator.geolocation) return;
+    mapAddressPreview.textContent = 'Joylashuv aniqlanmoqda...';
+    navigator.geolocation.getCurrentPosition(
+      (pos) => { map.setView([pos.coords.latitude, pos.coords.longitude], 17); },
+      () => { mapAddressPreview.textContent = "Joylashuvga ruxsat berilmadi. Xaritadan qo'lda tanlang."; },
+      { enableHighAccuracy: true, timeout: 8000 }
+    );
+  });
+
+  document.getElementById('confirmMapBtn').addEventListener('click', () => {
+    if (!selectedAddress.lat) return;
+    addressPreview.textContent = selectedAddress.text;
+    openMapBtn.classList.add('selected');
+    document.getElementById('addressField').classList.remove('error');
+    mapModal.classList.remove('open');
+  });
+
+  // ==== Validatsiya va yuborish ====
   function validate() {
     let valid = true;
     const name = document.getElementById('fullName');
     const phone = document.getElementById('phone');
-    const address = document.getElementById('address');
 
     document.getElementById('nameField').classList.remove('error');
     document.getElementById('phoneField').classList.remove('error');
@@ -383,9 +760,14 @@
       document.getElementById('phoneField').classList.add('error');
       valid = false;
     }
-    if (address.value.trim().length < 5) {
+    if (!selectedAddress.lat) {
       document.getElementById('addressField').classList.add('error');
       valid = false;
+    }
+    if (qty6 === 0 && qty8 === 0) {
+      valid = false;
+      if (tg) tg.showAlert('Iltimos, kamida bitta pachka turini tanlang.');
+      else alert('Iltimos, kamida bitta pachka turini tanlang.');
     }
     return valid;
   }
@@ -396,14 +778,22 @@
       return;
     }
 
+    const p6 = unitPrice6();
+    const p8 = unitPrice8();
+
     const order = {
-      product: document.getElementById('productName').textContent,
-      unit_price: UNIT_PRICE,
-      quantity: qty,
-      total: UNIT_PRICE * qty,
+      product: "OKEY PLUS Hojatxona qog'ozi",
+      payment_mode: payMode,
+      items: [
+        { variant: '6 talik', quantity: qty6, unit_price: p6, subtotal: p6 * qty6 },
+        { variant: '8 talik', quantity: qty8, unit_price: p8, subtotal: p8 * qty8 }
+      ],
+      total: (p6 * qty6) + (p8 * qty8),
       full_name: document.getElementById('fullName').value.trim(),
       phone: document.getElementById('phone').value.trim(),
-      address: document.getElementById('address').value.trim(),
+      address: selectedAddress.text,
+      address_lat: selectedAddress.lat,
+      address_lon: selectedAddress.lon,
       note: document.getElementById('note').value.trim()
     };
 
@@ -412,7 +802,6 @@
       tg.sendData(JSON.stringify(order));
       tg.close();
     } else {
-      // Telegramdan tashqarida (brauzerda) sinash uchun
       alert('Buyurtma (sinov rejimi):\n' + JSON.stringify(order, null, 2));
     }
   });
