@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Buyurtma berish</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --forest: #1F3A2E;
+    --forest-light: #2E5140;
+    --sand: #F6F0E4;
+    --sage: #E1E8DB;
+    --gold: #C99A2E;
+    --gold-dark: #A87D1E;
+    --ink: #22241F;
+    --ink-soft: #5C6157;
+    --line: #D8D2C2;
+    --white: #FFFFFF;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--sand);
+    color: var(--ink);
+    font-family: 'Manrope', sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 20px 20px 140px;
+  }
+
+  /* Product hero */
+  .product-card {
+    background: var(--forest);
+    border-radius: 20px;
+    padding: 22px;
+    color: var(--sand);
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 22px;
+  }
+
+  .product-card::after {
+    content: "";
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 140px; height: 140px;
+    background: var(--forest-light);
+    border-radius: 50%;
+    opacity: 0.5;
+  }
+
+  .eyebrow {
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 700;
+    position: relative;
+  }
+
+  .product-name {
+    font-family: 'Fraunces', serif;
+    font-size: 26px;
+    font-weight: 600;
+    margin: 8px 0 4px;
+    position: relative;
+    line-height: 1.15;
+  }
+
+  .product-desc {
+    font-size: 14px;
+    color: #C9D4C4;
+    margin: 0 0 18px;
+    position: relative;
+    max-width: 320px;
+  }
+
+  .price-row {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    position: relative;
+  }
+
+  .price {
+    font-family: 'Fraunces', serif;
+    font-size: 30px;
+    font-weight: 700;
+    color: var(--white);
+  }
+
+  .price-unit {
+    font-size: 13px;
+    color: #A9B8A2;
+  }
+
+  /* Quantity stepper */
+  .stepper-section {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 20px;
+    position: relative;
+  }
+
+  .stepper {
+    display: flex;
+    align-items: center;
+    background: rgba(255,255,255,0.08);
+    border-radius: 14px;
+    padding: 6px;
+  }
+
+  .stepper button {
+    width: 34px; height: 34px;
+    border-radius: 10px;
+    border: none;
+    background: var(--gold);
+    color: var(--forest);
+    font-size: 18px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .stepper button:active { transform: scale(0.94); }
+
+  .qty-value {
+    width: 46px;
+    text-align: center;
+    font-family: 'Fraunces', serif;
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--white);
+  }
+
+  /* Form */
+  .section-label {
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    font-weight: 700;
+    margin: 26px 0 10px 2px;
+  }
+
+  .field {
+    margin-bottom: 14px;
+  }
+
+  .field label {
+    display: block;
+    font-size: 13px;
+    color: var(--ink-soft);
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+
+  .field input,
+  .field textarea {
+    width: 100%;
+    border: 1.5px solid var(--line);
+    background: var(--white);
+    border-radius: 12px;
+    padding: 13px 14px;
+    font-size: 15px;
+    font-family: 'Manrope', sans-serif;
+    color: var(--ink);
+    outline: none;
+    transition: border-color 0.15s ease;
+  }
+
+  .field input:focus,
+  .field textarea:focus {
+    border-color: var(--forest);
+  }
+
+  .field textarea {
+    resize: none;
+    min-height: 70px;
+  }
+
+  .field.error input {
+    border-color: #B5493A;
+  }
+
+  .error-msg {
+    color: #B5493A;
+    font-size: 12px;
+    margin-top: 4px;
+    display: none;
+  }
+
+  .field.error .error-msg { display: block; }
+
+  /* Receipt summary */
+  .receipt {
+    margin-top: 24px;
+    background: var(--white);
+    border: 1.5px dashed var(--line);
+    border-radius: 14px;
+    padding: 16px 18px;
+  }
+
+  .receipt-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    color: var(--ink-soft);
+    padding: 5px 0;
+  }
+
+  .receipt-row.total {
+    border-top: 1.5px dashed var(--line);
+    margin-top: 6px;
+    padding-top: 10px;
+    color: var(--ink);
+    font-weight: 700;
+    font-size: 16px;
+  }
+
+  .receipt-row.total span:last-child {
+    font-family: 'Fraunces', serif;
+    color: var(--forest);
+  }
+
+  /* Sticky CTA */
+  .cta-bar {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: linear-gradient(to top, var(--sand) 60%, transparent);
+    padding: 18px 20px 22px;
+  }
+
+  .cta-bar-inner {
+    max-width: 480px;
+    margin: 0 auto;
+  }
+
+  .cta-btn {
+    width: 100%;
+    background: var(--forest);
+    color: var(--sand);
+    border: none;
+    border-radius: 14px;
+    padding: 16px;
+    font-size: 16px;
+    font-weight: 700;
+    font-family: 'Manrope', sans-serif;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .cta-btn:active { transform: scale(0.98); }
+  .cta-btn:disabled { opacity: 0.5; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="product-card">
+    <div class="eyebrow">Mahsulot</div>
+    <div class="product-name" id="productName">Mahsulot nomi</div>
+    <p class="product-desc" id="productDesc">Qisqacha tavsif shu yerga yoziladi — sifat, hajm yoki qadoqlash haqida.</p>
+    <div class="price-row">
+      <span class="price" id="unitPrice">50 000</span>
+      <span class="price-unit">so'm / dona</span>
+    </div>
+
+    <div class="stepper-section">
+      <span class="price-unit">Miqdor</span>
+      <div class="stepper">
+        <button type="button" id="minusBtn">−</button>
+        <span class="qty-value" id="qtyValue">1</span>
+        <button type="button" id="plusBtn">+</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label">Haridor ma'lumotlari</div>
+
+  <div class="field" id="nameField">
+    <label for="fullName">Ism va familiya</label>
+    <input type="text" id="fullName" placeholder="Masalan: Alisher Karimov">
+    <div class="error-msg">Iltimos, ismingizni kiriting</div>
+  </div>
+
+  <div class="field" id="phoneField">
+    <label for="phone">Telefon raqami</label>
+    <input type="tel" id="phone" placeholder="+998 90 123 45 67">
+    <div class="error-msg">To'g'ri telefon raqamini kiriting</div>
+  </div>
+
+  <div class="field" id="addressField">
+    <label for="address">Yetkazib berish manzili</label>
+    <input type="text" id="address" placeholder="Shahar, tuman, ko'cha, uy">
+    <div class="error-msg">Iltimos, manzilni kiriting</div>
+  </div>
+
+  <div class="section-label">Qo'shimcha (ixtiyoriy)</div>
+
+  <div class="field">
+    <label for="note">Izoh / ulgurchi savdo shartlari</label>
+    <textarea id="note" placeholder="Masalan: ulgurchi narx, yetkazib berish vaqti va h.k."></textarea>
+  </div>
+
+  <div class="receipt">
+    <div class="receipt-row"><span>Narxi (1 dona)</span><span id="rUnit">50 000 so'm</span></div>
+    <div class="receipt-row"><span>Miqdor</span><span id="rQty">1</span></div>
+    <div class="receipt-row total"><span>Jami</span><span id="rTotal">50 000 so'm</span></div>
+  </div>
+
+</div>
+
+<div class="cta-bar">
+  <div class="cta-bar-inner">
+    <button class="cta-btn" id="submitBtn">Buyurtmani yuborish</button>
+  </div>
+</div>
+
+<script>
+  const tg = window.Telegram ? window.Telegram.WebApp : null;
+  if (tg) { tg.ready(); tg.expand(); }
+
+  const UNIT_PRICE = 50000; // shu yerni haqiqiy narx bilan almashtiring
+  let qty = 1;
+
+  const qtyValue = document.getElementById('qtyValue');
+  const rQty = document.getElementById('rQty');
+  const rUnit = document.getElementById('rUnit');
+  const rTotal = document.getElementById('rTotal');
+
+  function formatSom(n) {
+    return n.toLocaleString('ru-RU') + ' so\'m';
+  }
+
+  function updateReceipt() {
+    qtyValue.textContent = qty;
+    rQty.textContent = qty;
+    rUnit.textContent = formatSom(UNIT_PRICE);
+    rTotal.textContent = formatSom(UNIT_PRICE * qty);
+  }
+
+  document.getElementById('plusBtn').addEventListener('click', () => {
+    qty += 1;
+    updateReceipt();
+  });
+
+  document.getElementById('minusBtn').addEventListener('click', () => {
+    if (qty > 1) qty -= 1;
+    updateReceipt();
+  });
+
+  updateReceipt();
+
+  function validate() {
+    let valid = true;
+    const name = document.getElementById('fullName');
+    const phone = document.getElementById('phone');
+    const address = document.getElementById('address');
+
+    document.getElementById('nameField').classList.remove('error');
+    document.getElementById('phoneField').classList.remove('error');
+    document.getElementById('addressField').classList.remove('error');
+
+    if (name.value.trim().length < 2) {
+      document.getElementById('nameField').classList.add('error');
+      valid = false;
+    }
+    const phoneDigits = phone.value.replace(/\D/g, '');
+    if (phoneDigits.length < 9) {
+      document.getElementById('phoneField').classList.add('error');
+      valid = false;
+    }
+    if (address.value.trim().length < 5) {
+      document.getElementById('addressField').classList.add('error');
+      valid = false;
+    }
+    return valid;
+  }
+
+  document.getElementById('submitBtn').addEventListener('click', () => {
+    if (!validate()) {
+      if (tg) tg.HapticFeedback.notificationOccurred('error');
+      return;
+    }
+
+    const order = {
+      product: document.getElementById('productName').textContent,
+      unit_price: UNIT_PRICE,
+      quantity: qty,
+      total: UNIT_PRICE * qty,
+      full_name: document.getElementById('fullName').value.trim(),
+      phone: document.getElementById('phone').value.trim(),
+      address: document.getElementById('address').value.trim(),
+      note: document.getElementById('note').value.trim()
+    };
+
+    if (tg) {
+      tg.HapticFeedback.notificationOccurred('success');
+      tg.sendData(JSON.stringify(order));
+      tg.close();
+    } else {
+      // Telegramdan tashqarida (brauzerda) sinash uchun
+      alert('Buyurtma (sinov rejimi):\n' + JSON.stringify(order, null, 2));
+    }
+  });
+</script>
+</body>
+</html>
