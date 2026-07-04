@@ -95,7 +95,6 @@ async def web_app_data_handler(message: Message):
 async def on_startup(app: web.Application):
     await bot.set_webhook(WEBHOOK_URL)
     logging.info(f"Webhook o'rnatildi: {WEBHOOK_URL}")
- 
  async def on_shutdown(app: web.Application):
     logging.info("Xizmat to'xtayapti (webhook saqlanib qoladi)")
  
