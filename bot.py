@@ -1,37 +1,29 @@
 """
 Telegram bot + Mini App (do'kon buyurtmasi)
 Kutubxona: aiogram 3.x
-Render.com kabi bulut xizmatida ISHLASH uchun WEBHOOK rejimida yozilgan.
+POLLING rejimida ishlaydi (webhook EMAS) — bu ancha barqaror va sodda.
  
-Kerakli ENVIRONMENT VARIABLE'lar (Render Dashboard > Environment bo'limida qo'shiladi):
+Kerakli ENVIRONMENT VARIABLE'lar (Render Dashboard > Environment bo'limida):
     BOT_TOKEN     -> @BotFather'dan olingan token
     WEBAPP_URL    -> Mini App joylashgan HTTPS havola (masalan, GitHub Pages)
     ADMIN_CHAT_ID -> buyurtmalar keladigan chat/kanal ID (raqam)
- 
-Render o'zi avtomatik beradigan narsalar (qo'lda kiritish shart emas):
-    PORT               -> serverning porti
-    RENDER_EXTERNAL_URL -> shu botga tegishli HTTPS manzil
 """
  
 import os
 import json
+import asyncio
 import logging
  
 from aiogram import Bot, Dispatcher, F
 from aiogram.filters import CommandStart
 from aiogram.types import Message, WebAppInfo, KeyboardButton, ReplyKeyboardMarkup
-from aiogram.webhook.aiohttp_server import SimpleRequestHandler, setup_application
 from aiohttp import web
  
-# ==== SOZLAMALAR (environment variable'lardan olinadi) ====
+# ==== SOZLAMALAR ====
 BOT_TOKEN = os.environ["BOT_TOKEN"]
 WEBAPP_URL = os.environ["WEBAPP_URL"]
 ADMIN_CHAT_ID = int(os.environ["ADMIN_CHAT_ID"])
- 
 PORT = int(os.environ.get("PORT", 10000))
-BASE_URL = os.environ["RENDER_EXTERNAL_URL"]   # Render avtomatik beradi
-WEBHOOK_PATH = "/webhook"
-WEBHOOK_URL = f"{BASE_URL}{WEBHOOK_PATH}"
  
 logging.basicConfig(level=logging.INFO)
 bot = Bot(token=BOT_TOKEN)
@@ -92,28 +84,33 @@ async def web_app_data_handler(message: Message):
         await bot.send_location(ADMIN_CHAT_ID, latitude=lat, longitude=lon)
  
  
-async def on_startup(app: web.Application):
-    await bot.set_webhook(WEBHOOK_URL)
-    logging.info(f"Webhook o'rnatildi: {WEBHOOK_URL}")
-async def on_shutdown(app: web.Application):
-    logging.info("Xizmat to'xtayapti (webhook saqlanib qoladi)")
+# ==== Render uchun kichik "tirikman" serveri ====
+# Render web-xizmat sifatida ishlashi uchun biror portni tinglab turishi shart.
+# Bu server hech qanday Telegram funksiyasiga aloqador emas — faqat
+# UptimeRobot va Render'ning "sog'lom holat" tekshiruvlariga javob beradi.
+async def health(request):
+    return web.Response(text="Bot ishlayapti (polling rejimida)")
  
  
-def main():
+async def run_health_server():
     app = web.Application()
-    SimpleRequestHandler(dispatcher=dp, bot=bot).register(app, path=WEBHOOK_PATH)
-    setup_application(app, dp, bot=bot)
-    app.on_startup.append(on_startup)
-    app.on_shutdown.append(on_shutdown)
- 
-    # Render'ning "hayotdaligimni bilib turish" so'rovlariga javob berish uchun
-    async def health(request):
-        return web.Response(text="Bot ishlayapti")
     app.router.add_get("/", health)
+    runner = web.AppRunner(app)
+    await runner.setup()
+    site = web.TCPSite(runner, "0.0.0.0", PORT)
+    await site.start()
+    logging.info(f"Health-server {PORT}-portda ishga tushdi")
  
-    web.run_app(app, host="0.0.0.0", port=PORT)
+ 
+async def main():
+    await run_health_server()
+    logging.info("Polling boshlandi...")
+    # Ishga tushishdan oldin eski webhook (agar bo'lsa) o'chiriladi —
+    # polling va webhook bir vaqtda ishlay olmaydi.
+    await bot.delete_webhook(drop_pending_updates=True)
+    await dp.start_polling(bot)
  
  
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
  
